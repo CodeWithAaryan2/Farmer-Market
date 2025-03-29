@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Products - Farmers Market{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold mb-4">Farm Fresh Products</h1>
+    
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+        <div class="mb-4 md:mb-0">
+            <div class="relative">
+                <select class="block appearance-none bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <option>All Categories</option>
+                    <option>Vegetables</option>
+                    <option>Fruits</option>
+                    <option>Dairy</option>
+                    <option>Meat</option>
+                    <option>Grains</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+            <div class="relative">
+                <input type="text" placeholder="Search products..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                <div class="absolute left-3 top-2.5 text-gray-400">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+            <button class="bg-green-600 text-white p-2 rounded-lg hover:bg-green-700 transition">
+                <i class="fas fa-filter"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for product in products %}
+        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition">
+            <div class="relative">
+                <div class="h-48 bg-gray-200 overflow-hidden">
+                    <img src="{{ product.get('image_url', url_for('static', filename='images/default-product.jpg')) }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+                </div>
+                {% if product.is_organic %}
+                <span class="absolute top-2 left-2 bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Organic</span>
+                {% endif %}
+            </div>
+            <div class="p-4">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="font-bold text-lg">{{ product.name }}</h3>
+                    <span class="bg-green-100 text-green-800 text-sm px-2 py-1 rounded">${{ "%.2f"|format(product.price) }}/{{ product.unit }}</span>
+                </div>
+                <p class="text-gray-600 text-sm mb-3">{{ product.description[:80] }}...</p>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-500">{{ product.category }}</span>
+                    <a href="{{ url_for('product_detail', product_id=product._id) }}" class="text-green-600 hover:text-green-800 text-sm font-medium">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="mt-8 flex justify-center">
+        <nav class="flex items-center space-x-2">
+            <a href="#" class="px-3 py-1 rounded-lg border border-gray-300 text-gray-500 hover:bg-gray-100">&laquo;</a>
+            <a href="#" class="px-3 py-1 rounded-lg bg-green-600 text-white">1</a>
+            <a href="#" class="px-3 py-1 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100">2</a>
+            <a href="#" class="px-3 py-1 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100">3</a>
+            <a href="#" class="px-3 py-1 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100">4</a>
+            <a href="#" class="px-3 py-1 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100">5</a>
+            <a href="#" class="px-3 py-1 rounded-lg border border-gray-300 text-gray-500 hover:bg-gray-100">&raquo;</a>
+        </nav>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - Farmers Market{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <!-- Product Images -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="h-96 bg-gray-200 overflow-hidden">
+                <img src="{{ product.get('image_url', url_for('static', filename='images/default-product.jpg')) }}" 
+                     alt="{{ product.name }}" class="w-full h-full object-cover">
+            </div>
+            <div class="p-4 grid grid-cols-4 gap-2">
+                <div class="h-16 bg-gray-200 rounded overflow-hidden cursor-pointer border-2 border-green-500">
+                    <img src="{{ product.get('image_url', url_for('static', filename='images/default-product.jpg')) }}" 
+                         alt="{{ product.name }}" class="w-full h-full object-cover">
+                </div>
+                <div class="h-16 bg-gray-200 rounded overflow-hidden cursor-pointer">
+                    <img src="{{ url_for('static', filename='images/product-alt1.jpg') }}" 
+                         alt="{{ product.name }}" class="w-full h-full object-cover">
+                </div>
+                <div class="h-16 bg-gray-200 rounded overflow-hidden cursor-pointer">
+                    <img src="{{ url_for('static', filename='images/product-alt2.jpg') }}" 
+                         alt="{{ product.name }}" class="w-full h-full object-cover">
+                </div>
+                <div class="h-16 bg-gray-200 rounded overflow-hidden cursor-pointer">
+                    <img src="{{ url_for('static', filename='images/product-alt3.jpg') }}" 
+                         alt="{{ product.name }}" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Product Info -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <div class="flex justify-between items-start mb-4">
+                <h1 class="text-3xl font-bold">{{ product.name }}</h1>
+                {% if product.is_organic %}
+                <span class="bg-green-100 text-green-800 text-sm px-3 py-1 rounded-full">Organic Certified</span>
+                {% endif %}
+            </div>
+            
+            <div class="flex items-center mb-4">
+                <div class="flex text-yellow-400 mr-2">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                </div>
+                <span class="text-gray-600 text-sm">(24 reviews)</span>
+            </div>
+            
+            <p class="text-gray-700 mb-6">{{ product.description }}</p>
+            
+            <div class="mb-6">
+                <span class="text-3xl font-bold text-green-700">₹{{ "%.2f"|format(product.price) }}</span>
+                <span class="text-gray-500">per {{ product.unit }}</span>
+            </div>
+            
+            <div class="mb-6">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-box-open text-gray-500 mr-2"></i>
+                    <span class="text-gray-700">Available: <strong>{{ product.quantity }} {{ product.unit }}s</strong></span>
+                </div>
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-tag text-gray-500 mr-2"></i>
+                    <span class="text-gray-700">Category: <strong>{{ product.category }}</strong></span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-calendar-alt text-gray-500 mr-2"></i>
+                    <span class="text-gray-700">Harvested: <strong>{{ product.harvest_date.strftime('%B %d, %Y') if product.harvest_date else 'Recently' }}</strong></span>
+                </div>
+            </div>
+            
+            <div class="flex items-center mb-6">
+                <div class="flex -space-x-2 mr-4">
+                    <img src="https://randomuser.me/api/portraits/women/32.jpg" class="w-10 h-10 rounded-full border-2 border-white">
+                    <img src="https://randomuser.me/api/portraits/men/45.jpg" class="w-10 h-10 rounded-full border-2 border-white">
+                    <img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-10 h-10 rounded-full border-2 border-white">
+                </div>
+                <span class="text-gray-600 text-sm">20+ people are viewing this</span>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-4">
+                <div class="flex items-center border border-gray-300 rounded-lg">
+                    <button class="px-4 py-2 text-gray-600 hover:bg-gray-100">-</button>
+                    <span class="px-4 py-2">1</span>
+                    <button class="px-4 py-2 text-gray-600 hover:bg-gray-100">+</button>
+                </div>
+                <button class="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg font-bold hover:bg-green-700 transition flex items-center justify-center">
+                    <i class="fas fa-shopping-cart mr-2"></i> Add to Cart
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Farmer Info -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-12">
+        <h2 class="text-2xl font-bold mb-6">About the Farmer</h2>
+        
+        <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex-shrink-0">
+                <div class="w-32 h-32 rounded-full overflow-hidden bg-gray-200 border-4 border-green-100">
+                    <img src="{{ farmer.get('image_url', url_for('static', filename='images/default-farmer.jpg')) }}" 
+                         alt="{{ farmer.name }}" class="w-full h-full object-cover">
+                </div>
+            </div>
+            
+            <div class="flex-1">
+                <h3 class="text-xl font-bold mb-2">{{ farmer.name }}</h3>
+                <p class="text-gray-700 mb-4">{{ farmer.farm_name }}</p>
+                
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-map-marker-alt text-gray-500 mr-2"></i>
+                    <span>{{ farmer.location.address }}, {{ farmer.location.city }}, {{ farmer.location.state }} {{ farmer.location.zipcode }}</span>
+                </div>
+                
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-phone text-gray-500 mr-2"></i>
+                    <span>{{ farmer.phone }}</span>
+                </div>
+                
+                <p class="text-gray-700 mb-4">Family-owned farm since 1985, specializing in organic produce and sustainable farming practices.</p>
+                
+                <div class="flex space-x-4">
+                    <a href="#" class="text-green-600 hover:text-green-800">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="text-green-600 hover:text-green-800">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-green-600 hover:text-green-800">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="md:w-64 flex-shrink-0">
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h4 class="font-bold mb-2">Farm Stats</h4>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Products</span>
+                            <span class="font-bold">12</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Rating</span>
+                            <span class="font-bold">4.8/5</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Customers</span>
+                            <span class="font-bold">240+</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Reviews -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-12">
+        <h2 class="text-2xl font-bold mb-6">Customer Reviews</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div>
+                <div class="flex items-center mb-2">
+                    <div class="text-4xl font-bold mr-4">4.8</div>
+                    <div>
+                        <div class="flex text-yellow-400 mb-1">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <div class="text-gray-600 text-sm">Based on 24 reviews</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <span class="w-16 text-sm text-gray-600">5 stars</span>
+                        <div class="flex-1 bg-gray-200 rounded-full h-2.5 mx-2">
+                            <div class="bg-yellow-400 h-2.5 rounded-full" style="width: 80%"></div>
+                        </div>
+                        <span class="w-8 text-sm text-gray-600">80%</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-16 text-sm text-gray-600">4 stars</span>
+                        <div class="flex-1 bg-gray-200 rounded-full h-2.5 mx-2">
+                            <div class="bg-yellow-400 h-2.5 rounded-full" style="width: 15%"></div>
+                        </div>
+                        <span class="w-8 text-sm text-gray-600">15%</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-16 text-sm text-gray-600">3 stars</span>
+                        <div class="flex-1 bg-gray-200 rounded-full h-2.5 mx-2">
+                            <div class="bg-yellow-400 h-2.5 rounded-full" style="width: 5%"></div>
+                        </div>
+                        <span class="w-8 text-sm text-gray-600">5%</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-16 text-sm text-gray-600">2 stars</span>
+                        <div class="flex-1 bg-gray-200 rounded-full h-2.5 mx-2">
+                            <div class="bg-yellow-400 h-2.5 rounded-full" style="width: 0%"></div>
+                        </div>
+                        <span class="w-8 text-sm text-gray-600">0%</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-16 text-sm text-gray-600">1 star</span>
+                        <div class="flex-1 bg-gray-200 rounded-full h-2.5 mx-2">
+                            <div class="bg-yellow-400 h-2.5 rounded-full" style="width: 0%"></div>
+                        </div>
+                        <span class="w-8 text-sm text-gray-600">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-green-700 transition mb-8">
+            Write a Review
+        </button>
+        
+        <div class="space-y-6">
+            <div class="border-b border-gray-200 pb-6">
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <h4 class="font-bold">Sarah Johnson</h4>
+                        <div class="flex text-yellow-400 text-sm mb-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <span class="text-sm text-gray-500">2 weeks ago</span>
+                </div>
+                <p class="text-gray-700">The tomatoes were incredibly fresh and flavorful. Much better than anything I've found in supermarkets. Will definitely order again!</p>
+            </div>
+            
+            <div class="border-b border-gray-200 pb-6">
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <h4 class="font-bold">Michael Chen</h4>
+                        <div class="flex text-yellow-400 text-sm mb-2">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <span class="text-sm text-gray-500">1 month ago</span>
+                </div>
+                <p class="text-gray-700">As a chef, I'm very particular about ingredients. These tomatoes are restaurant quality and arrived in perfect condition.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Related Products -->
+    <div>
+        <h2 class="text-2xl font-bold mb-6">You May Also Like</h2>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {% for i in range(4) %}
+            <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition">
+                <div class="h-48 bg-gray-200 overflow-hidden">
+                    <img src="{{ url_for('static', filename='images/related-product' ~ (i+1) ~ '.jpg') }}" 
+                         alt="Related product" class="w-full h-full object-cover">
+                </div>
+                <div class="p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-bold">Organic Carrots</h3>
+                        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">₹3.99/lb</span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-3">Freshly harvested organic carrots, sweet and crunchy.</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500">Vegetables</span>
+                        <a href="#" class="text-green-600 hover:text-green-800 text-sm font-medium">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

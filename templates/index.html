@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Farmers Market{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="bg-green-600 text-white py-20 rounded-xl mb-12">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6">Fresh Produce Direct From Local Farmers</h1>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">Support your local farming community while enjoying the freshest, most nutritious food available.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="{{ url_for('product_list') }}" class="bg-white text-green-700 px-6 py-3 rounded-lg font-bold hover:bg-green-100 transition">Shop Now</a>
+                <a href="{{ url_for('register') }}" class="bg-transparent border-2 border-white px-6 py-3 rounded-lg font-bold hover:bg-white hover:text-green-700 transition">Sell With Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="mb-16">
+        <h2 class="text-3xl font-bold mb-8 text-center">Featured Products</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {% for product in featured_products %}
+            <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition">
+                <div class="h-48 bg-gray-200 overflow-hidden">
+                    <img src="{{ product.get('image_url', url_for('static', filename='images/default-product.jpg')) }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+                </div>
+                <div class="p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-bold text-lg">{{ product.name }}</h3>
+                        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">${{ "%.2f"|format(product.price) }}</span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-3">{{ product.description[:60] }}...</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500">{{ product.category }}</span>
+                        <a href="{{ url_for('product_detail', product_id=product._id) }}" class="text-green-600 hover:text-green-800 text-sm font-medium">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-8">
+            <a href="{{ url_for('product_list') }}" class="inline-block bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">View All Products</a>
+        </div>
+    </section>
+
+    <!-- Top Farmers -->
+    <section class="mb-16">
+        <h2 class="text-3xl font-bold mb-8 text-center">Meet Our Farmers</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for farmer in top_farmers %}
+            <div class="bg-white rounded-xl shadow-md overflow-hidden text-center hover:shadow-lg transition">
+                <div class="h-40 bg-gray-200 overflow-hidden">
+                    <img src="{{ farmer.get('image_url', url_for('static', filename='images/default-farmer.jpg')) }}" alt="{{ farmer.name }}" class="w-full h-full object-cover">
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-lg">{{ farmer.name }}</h3>
+                    <p class="text-gray-600 text-sm mb-2">{{ farmer.farm_name }}</p>
+                    <p class="text-sm text-gray-500 mb-3">
+                        <i class="fas fa-map-marker-alt mr-1"></i> {{ farmer.location.city }}, {{ farmer.location.state }}
+                    </p>
+                    <div class="flex justify-center space-x-2">
+                        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Organic</span>
+                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">5+ Products</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="bg-gray-100 py-12 rounded-xl mb-12">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-12 text-center">Why Choose Farmers Market?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-seedling text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-xl mb-2">Fresh & Local</h3>
+                    <p class="text-gray-600">Get the freshest produce harvested at peak ripeness from farms near you.</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-hand-holding-heart text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-xl mb-2">Support Farmers</h3>
+                    <p class="text-gray-600">Buy directly from farmers and help them earn a fair price for their hard work.</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-truck text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-xl mb-2">Fast Delivery</h3>
+                    <p class="text-gray-600">Get your order delivered quickly or pick up directly from the farm.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="mb-16">
+        <h2 class="text-3xl font-bold mb-8 text-center">What Our Customers Say</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 rounded-full bg-gray-300 overflow-hidden mr-4">
+                        <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Customer" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h4 class="font-bold">Sarah Johnson</h4>
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-gray-600">"The tomatoes I bought were the most flavorful I've ever tasted. Knowing they came from a local farm just makes it better!"</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 rounded-full bg-gray-300 overflow-hidden mr-4">
+                        <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Customer" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h4 class="font-bold">Michael Chen</h4>
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-gray-600">"As a chef, quality ingredients are everything. Farmers Market connects me directly with the best local producers."</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="flex items-center mb-4">
+                    <div class="w-12 h-12 rounded-full bg-gray-300 overflow-hidden mr-4">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Customer" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h4 class="font-bold">Emily Rodriguez</h4>
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-gray-600">"I love being able to talk directly to the farmers about how the food is grown. It's completely changed how my family eats."</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="bg-green-700 text-white py-12 rounded-xl">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4">Ready to Experience Farm-Fresh Goodness?</h2>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">Join thousands of happy customers enjoying the best local produce.</p>
+            <a href="{{ url_for('register') }}" class="inline-block bg-white text-green-700 px-8 py-3 rounded-lg font-bold hover:bg-green-100 transition">Sign Up Now</a>
+        </div>
+    </section>
+{% endblock %}

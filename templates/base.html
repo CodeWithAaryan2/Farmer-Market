@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmers Market - {% block title %}{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-green-700 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="{{ url_for('index') }}" class="flex items-center space-x-2">
+                <i class="fas fa-leaf text-2xl"></i>
+                <span class="text-xl font-bold">Farmers Market</span>
+            </a>
+            
+            <div class="hidden md:flex space-x-6">
+                <a href="{{ url_for('product_list') }}" class="hover:text-green-200">Products</a>
+                <a href="#" class="hover:text-green-200">Farmers</a>
+                <a href="#" class="hover:text-green-200">About</a>
+                <a href="#" class="hover:text-green-200">Contact</a>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                {% if 'user_id' in session %}
+                    <a href="{{ url_for('dashboard') }}" class="hover:text-green-200">
+                        <i class="fas fa-user-circle text-xl"></i>
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="hover:text-green-200">
+                        <i class="fas fa-sign-out-alt text-xl"></i>
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="hover:text-green-200">Login</a>
+                    <a href="{{ url_for('register') }}" class="bg-white text-green-700 px-4 py-2 rounded-lg hover:bg-green-100 transition">Register</a>
+                {% endif %}
+                <a href="#" class="relative">
+                    <i class="fas fa-shopping-cart text-xl"></i>
+                    <span class="absolute -top-2 -right-2 bg-yellow-500 text-xs text-white rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                </a>
+            </div>
+            
+            <button class="md:hidden text-xl focus:outline-none">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mx-auto px-4 mt-4">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} p-4 mb-4 rounded-lg bg-{{ category }}-100 border border-{{ category }}-400 text-{{ category }}-700">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main content -->
+    <main class="container mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Farmers Market</h3>
+                    <p class="text-gray-400">Connecting farmers directly with consumers for fresh, local produce.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Home</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Products</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Farmers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">About Us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Categories</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Vegetables</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Fruits</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Dairy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Meat</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Contact Us</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-center space-x-2">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span class="text-gray-400">123 Farm Road, Countryside</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i class="fas fa-phone"></i>
+                            <span class="text-gray-400">+1 (123) 456-7890</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i class="fas fa-envelope"></i>
+                            <span class="text-gray-400">info@farmersmarket.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2023 Farmers Market. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle functionality would go here
+    </script>
+</body>
+</html>

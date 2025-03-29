@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Add Product - Farmers Market{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-8">
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-green-700">Add New Product</h1>
+        <p class="text-gray-600">List your farm-fresh products for customers to discover</p>
+    </div>
+    
+    <form method="POST" action="{{ url_for('add_product') }}" enctype="multipart/form-data">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+                <label for="name" class="block text-gray-700 font-medium mb-2">Product Name*</label>
+                <input type="text" id="name" name="name" required 
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+            
+            <div>
+                <label for="category" class="block text-gray-700 font-medium mb-2">Category*</label>
+                <select id="category" name="category" required 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <option value="">Select a category</option>
+                    <option value="Vegetables">Vegetables</option>
+                    <option value="Fruits">Fruits</option>
+                    <option value="Dairy">Dairy</option>
+                    <option value="Meat">Meat</option>
+                    <option value="Grains">Grains</option>
+                    <option value="Herbs">Herbs</option>
+                </select>
+            </div>
+            
+            <div>
+                <label for="price" class="block text-gray-700 font-medium mb-2">Price*</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-2.5 text-gray-500">₹</span>
+                    <input type="number" id="price" name="price" step="0.01" min="0" required 
+                           class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                </div>
+            </div>
+            
+            <div>
+                <label for="unit" class="block text-gray-700 font-medium mb-2">Unit*</label>
+                <select id="unit" name="unit" required 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <option value="">Select unit</option>
+                    <option value="lb">Pound (lb)</option>
+                    <option value="kg">Kilogram (kg)</option>
+                    <option value="oz">Ounce (oz)</option>
+                    <option value="g">Gram (g)</option>
+                    <option value="each">Each</option>
+                    <option value="dozen">Dozen</option>
+                    <option value="bunch">Bunch</option>
+                </select>
+            </div>
+            
+            <div>
+                <label for="quantity" class="block text-gray-700 font-medium mb-2">Quantity Available*</label>
+                <input type="number" id="quantity" name="quantity" min="1" required 
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+            
+            <div class="flex items-end">
+                <div class="w-full">
+                    <label class="block text-gray-700 font-medium mb-2">Organic</label>
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" name="is_organic" class="form-checkbox h-5 w-5 text-green-600">
+                        <span class="ml-2 text-gray-700">Certified Organic</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mb-6">
+            <label for="description" class="block text-gray-700 font-medium mb-2">Description*</label>
+            <textarea id="description" name="description" rows="4" required 
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+        </div>
+        
+        <div class="mb-6">
+            <label class="block text-gray-700 font-medium mb-2">Product Image*</label>
+            <div class="flex items-center justify-center w-full">
+                <label for="image" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6" id="upload-label">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                        <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-500">PNG, JPG, GIF (MAX. 5MB)</p>
+                    </div>
+                    <input id="image" name="image" type="file" class="hidden" accept="image/*" required>
+                </label>
+            </div>
+        </div>
+        
+        <div class="flex justify-end space-x-4">
+            <button type="button" onclick="window.history.back()" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition">
+                Cancel
+            </button>
+            <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition">
+                Add Product
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Preview image before upload
+    document.getElementById('image').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        const uploadLabel = document.getElementById('upload-label');
+        
+        if (file) {
+            // Check file size (5MB limit)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size exceeds 5MB limit');
+                event.target.value = ''; // Clear the file input
+                return;
+            }
+            
+            // Check file type
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!validTypes.includes(file.type)) {
+                alert('Only JPG, PNG, or GIF files are allowed');
+                event.target.value = ''; // Clear the file input
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const uploadArea = event.target.parentElement;
+                uploadArea.style.backgroundImage = `url(${e.target.result})`;
+                uploadArea.style.backgroundSize = 'cover';
+                uploadArea.style.backgroundPosition = 'center';
+                uploadLabel.style.display = 'none'; // Hide the upload label
+            }
+            reader.readAsDataURL(file);
+        } else {
+            // Reset if no file selected
+            const uploadArea = event.target.parentElement;
+            uploadArea.style.backgroundImage = '';
+            uploadLabel.style.display = 'flex'; // Show the upload label again
+        }
+    });
+</script>
+{% endblock %}

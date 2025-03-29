@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.name if user else 'Profile' }} - Farmers Market{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <!-- Flash Messages -->
+    {% include '_flash_messages.html' %}
+    
+    {% if user %}
+        <!-- Profile Header -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+            <!-- Cover Photo -->
+            <div class="h-48 bg-green-600 relative">
+                <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent h-20"></div>
+            </div>
+            
+            <!-- Profile Picture Section -->
+            <div class="px-6 pb-6 relative">
+                <div class="flex flex-col md:flex-row items-start md:items-end -mt-16">
+                    <!-- Profile Picture with Upload Form -->
+                    <div class="relative mr-6 mb-4 md:mb-0 group">
+                        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-white bg-gray-200 relative">
+                            <img src="{{ user.image_url }}" 
+                                 alt="{{ user.name }}"
+                                 class="w-full h-full object-cover"
+                                 onerror="this.src='{{ url_for('static', filename='images/default-profile.png') }}'">
+                            
+                            <!-- Upload Overlay -->
+                            <form method="POST" action="{{ url_for('update_profile_picture') }}" 
+                                  enctype="multipart/form-data" 
+                                  class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black bg-opacity-50 rounded-full">
+                                <label class="cursor-pointer text-white text-center p-2">
+                                    <i class="fas fa-camera text-2xl block mx-auto mb-1"></i>
+                                    <span class="text-xs">Change Photo</span>
+                                    <input type="file" name="profile_picture" accept="image/*" class="hidden" 
+                                           onchange="this.form.submit()">
+                                </label>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- User Info -->
+                    <div class="flex-1">
+                        <h1 class="text-2xl font-bold">{{ user.name }}</h1>
+                        {% if user.user_type == 'farmer' %}
+                        <p class="text-gray-600 mb-2">{{ user.farm_name or 'My Farm' }}</p>
+                        {% endif %}
+                        
+                        <div class="flex items-center text-sm text-gray-500 mb-4">
+                            <i class="fas fa-map-marker-alt mr-1"></i>
+                            <span>
+                                {% if user.location %}
+                                    {{ user.location.city or 'City' }}, {{ user.location.state or 'State' }}
+                                {% else %}
+                                    Location not set
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Picture Upload Section -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">Profile Picture</h2>
+            <div class="flex items-center">
+                <div class="mr-6">
+                    <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200">
+                        <img src="{{ user.image_url }}" 
+                             alt="{{ user.name }}"
+                             onerror="this.onerror=null; this.src='{{ url_for('static', filename='images/default-profile.png') }}'"
+                             class="w-full h-full object-cover">
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <form method="POST" action="{{ url_for('update_profile_picture') }}" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-medium mb-2">Update Profile Picture</label>
+                            <input type="file" name="profile_picture" accept="image/*" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                            Upload Picture
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Profile Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Farm Information -->
+            <div class="lg:col-span-2 bg-white rounded-xl shadow-md p-6">
+                <h2 class="text-xl font-bold mb-6">Farm Information</h2>
+                
+                <form method="POST" action="{{ url_for('update_profile') }}">
+                    <div class="mb-6">
+                        <label for="farm_name" class="block text-gray-700 font-medium mb-2">Farm Name</label>
+                        <input type="text" id="farm_name" name="farm_name" 
+                               value="{{ user.farm_name }}" 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="phone" class="block text-gray-700 font-medium mb-2">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" 
+                                   value="{{ user.phone }}" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                        
+                        <div>
+                            <label for="email" class="block text-gray-700 font-medium mb-2">Email Address</label>
+                            <input type="email" id="email" name="email" 
+                                   value="{{ user.email }}" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="description" class="block text-gray-700 font-medium mb-2">Farm Description</label>
+                        <textarea id="description" name="description" rows="4" 
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">{{ user.description }}</textarea>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-medium mb-2">Farm Address</label>
+                        <input type="text" id="address" name="address" 
+                               value="{{ user.location.address }}" 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 mb-2" 
+                               placeholder="Street address">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <input type="text" id="city" name="city" 
+                                   value="{{ user.location.city }}" 
+                                   class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" 
+                                   placeholder="City">
+                            <input type="text" id="state" name="state" 
+                                   value="{{ user.location.state }}" 
+                                   class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" 
+                                   placeholder="State">
+                            <input type="text" id="zipcode" name="zipcode" 
+                                   value="{{ user.location.zipcode }}" 
+                                   class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" 
+                                   placeholder="ZIP Code">
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end">
+                        <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Additional Sections -->
+            <div class="space-y-6">
+                <!-- Social Links -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-xl font-bold mb-6">Social Links</h2>
+                    <form method="POST" action="{{ url_for('update_social_links') }}">
+                        <div class="space-y-4">
+                            {% for platform in ['facebook', 'twitter', 'instagram', 'youtube'] %}
+                            <div>
+                                <label for="{{ platform }}" class="block text-gray-700 font-medium mb-2">
+                                    {{ platform|title }}
+                                </label>
+                                <div class="flex">
+                                    <span class="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-500">
+                                        <i class="fab fa-{{ platform }}"></i>
+                                    </span>
+                                    <input type="url" id="{{ platform }}" name="{{ platform }}" 
+                                           value="{{ user.social_links.get(platform, '') }}" 
+                                           placeholder="https://{{ platform }}.com/yourusername" 
+                                           class="flex-1 px-4 py-2 border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                                </div>
+                            </div>
+                            {% endfor %}
+                            
+                            <div class="pt-2">
+                                <button type="submit" class="w-full px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition">
+                                    Save Social Links
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Change Password -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-xl font-bold mb-6">Change Password</h2>
+                    <form method="POST" action="{{ url_for('change_password') }}">
+                        <div class="space-y-4">
+                            <div>
+                                <label for="current_password" class="block text-gray-700 font-medium mb-2">Current Password</label>
+                                <input type="password" id="current_password" name="current_password" required
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                            </div>
+                            
+                            <div>
+                                <label for="new_password" class="block text-gray-700 font-medium mb-2">New Password</label>
+                                <input type="password" id="new_password" name="new_password" required
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                            </div>
+                            
+                            <div>
+                                <label for="confirm_password" class="block text-gray-700 font-medium mb-2">Confirm Password</label>
+                                <input type="password" id="confirm_password" name="confirm_password" required
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                            </div>
+                            
+                            <div class="pt-2">
+                                <button type="submit" class="w-full px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition">
+                                    Update Password
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
